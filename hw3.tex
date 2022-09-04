@@ -1,0 +1,106 @@
+\documentclass[12pt,letterpaper, onecolumn]{exam}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{nicefrac}
+\setcounter{MaxMatrixCols}{20}
+\usepackage[lmargin=.75in, rmargin=.75in]{geometry}  %For centering solution box
+\lhead{Optimal Estimation}
+\rhead{Noah Miller}
+\thispagestyle{empty}   %For removing header/footer from page 1
+
+\begin{document}
+
+\begingroup
+\centering
+\LARGE Optimal Estimation\\
+\LARGE Homework 3 \\[0.5em]
+\large \today\\[0.5em]
+\large Noah Miller\par
+\large 903949330\par
+\large MECH 7710\par
+\endgroup
+\pointsdroppedatright   %Self-explanatory
+\printanswers
+\renewcommand{\solution}{\noindent\textbf{Ans:}\enspace}   %Replace "Ans:" with starting keyword in solution box
+\vspace{.5cm}
+
+\noindent Note: All problems are to be samples at 10~Hz ($T_s = 0.1$) except for problem 3.
+
+\noindent Also, all data is available on Canvas.
+\begin{questions}
+    \question{Kalman Filter at its best -- simulation (actually the Kalman filter is also quite reliable when we have an excellent model and low noise sensors). Suppose we have a second-order system that we are regulating about zero (position and velocity) by wrapping an \textit{optimal} control loop around the system. The new dynamics of the continuous time system are given by the closed-loop A matrix:
+        \[
+            A_{CL} =
+            \begin{bmatrix}
+                0  & 1    \\
+                -1 & -1.4 \\
+            \end{bmatrix}
+        \]
+        Suppose our measurement is simply position $\left(C = \left[\;1 \quad 0\;\right]\right)$. There is a white noise process disturbance $\left(force, B_w = \left[\;0 \quad 1\;\right]^T\right)$ acting on the controlled system.}
+    \begin{parts}
+        \part{Simulate the controlled system with the disturbance force $\left(1\sigma = 2\right)$ and a sampled sensor noise $\left(1\sigma = 1\right)$ for 100 seconds at a 10~Hz sample rate.}
+
+        \part{What is $Q$,$Q_d$, and $R_d$?}
+
+        \part{Calculate the steady state Kalman gain for the system. This can be done in one of many ways: iterate the Kalman filter unit it converges, $dlqe.m$, $dare.m$, $kalman.m$, $dlqr.m$ ($+$ predictor to current estimator trick), etc.
+            What is the steady state covariance of the estimates after the time update, $P^{(-)}$, as well as after the measurement update,$P^{(+)}$? Where are the poles of the estimator?}
+
+        \part{Now use the steady state Kalman filter to generate an estimate $\big(\hat{x}\;\text{and}\;\hat{\dot{x}}\big)$ of the 2 states over time. Calculate the norm of the standard deviation of the errors of each state. \[N = \sqrt{\big(std\big(\dot{x} - \hat{\dot{x}}\big)\big)^2 + \left(std\big(x - \hat{x}\big)\right)^2} \]}
+
+        \part{%
+            Change the ratio of the $Q$ and $R$ weights in the Kalman filter design (and repeat part (d) with new Kalman gain but DO NOT regenerate a new $x$ and $\dot{x}$) and determine the effect on the estimation errors. For what ratio of $Q$ and $R_d$ are the errors minimized?
+
+            Note: Often in practice we do not know the actual $Q$ and $R_d$ so these tend to be "tuning" parameters we can use to tune our filter. However, according to Kalman, the estimation errors are only minimized if we use the $Q$ and $R_d$ of the physical system.}
+
+    \end{parts}
+    \clearpage
+    \question{}
+    \begin{parts}
+        \part{}
+
+        \part{}
+
+        \part{}
+
+        \part{}
+    \end{parts}
+    \clearpage
+    \question{}
+    \begin{parts}
+        \part{}
+
+        \part{}
+
+        \part{}
+
+    \end{parts}
+    \clearpage
+    \question{}
+    \begin{parts}
+        \part{}
+
+        \part{}
+
+        \part{}
+
+        \part{}
+
+    \end{parts}
+    \clearpage
+    \question{}
+    \begin{parts}
+        \part{}
+
+        \part{}
+
+        \part{}
+
+        \part{}
+
+        \part{}
+    \end{parts}
+\end{questions}
+
+\end{document}

@@ -1,0 +1,9 @@
+# FILENAME: .gitignore
+# DESCRIPTION: This .gitignore ignores all latex extension documents and images generated from scripts
+*.aux
+*.fdb_latexmk
+*.log
+*.synctex.gz
+*.fls
+*.pdf
+*.asv
