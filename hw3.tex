@@ -56,11 +56,14 @@
 
     \end{parts}
     \clearpage
-    \question{}
+    \question{Download the data \textit{hw3\_2}} from the website. The data is in the form $\left[\;\mathbf{t} \quad \mathbf{y}\;\right]$. Suppose we want to design an estimator to estimate the bias in the measurement $y$. We believe that the bias,$x$, is constant so we use the model given by
+    \[\dot{x} = 0\]
+    \[y_k = x_k + \nu_k \]
+    \[\nu_k \sim N(0,1) \]
     \begin{parts}
-        \part{}
+        \part{Run the Kalman filter estimator with $Q_d = 0$. What at happens when $t$ becomes greater than 100 seconds? Why? Calculate the steady state Kalman gain $L_{ss}$. Plot $L(k)$. This is known as the filter "going to sleep" (i.e. becomes a least squares estimator). }
 
-        \part{}
+        \part{To offset this problem}
 
         \part{}
 
