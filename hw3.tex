@@ -65,47 +65,141 @@
 
         \part{To offset this problem we will "tune" $Q_d$ to track the bias. What is the effect of changing $Q_d$ on the ability to track the step change in the bias? Try values of $Q_d$ from $0.0001$ to $0.01$ and plot $L(k)$ as well as the estimate of the bias $(\hat{x})$. What is the trade-off?}
 
-        \part{Now filter the measurement using the first-order low-pass filter 
-        \[H(z)=  \frac{\sqrt{Q_d}}{z - \left(1 - \sqrt{Q_d}\right)} \]
-        Use the command: 
-        \[yf = filter(numd,dend,y,y0)\]}
+        \part{Now filter the measurement using the first-order low-pass filter
+            \[H(z)=  \frac{\sqrt{Q_d}}{z - \left(1 - \sqrt{Q_d}\right)} \]
+            Use the command:
+            \[yf = filter(numd,dend,y,y0)\]}
 
         \part{How does this compare to the Kalman filter solution? Why are these two filters the same for this problem.}
     \end{parts}
     \clearpage
-    \question{}
+    \question{Design a “Navigation” type Kalman filter to estimate the states [East, North Radar\_Bias, Psi, Gyro\_Bias]. (Note: this is a non-linear problem that requires an Extended Kalman Filter (EKF) to do correctly.)
+
+        However we can solve the problem in one of two ways:
+        \begin{itemize}
+            \item[i.] linearize the equations about the nominal operating point and produce a constant A matrix for that operating point
+            \item[ii.] simply update the A matrix at every time step with our measurements or estimates
+        \end{itemize}
+        Download the data \textit{hw3\_3} from the website and run the filter sampled at 5 Hz}
     \begin{parts}
-        \part{}
+        \part{How did you choose the covariance values for $Q_d$ (especially for the radar and gyro biases)?}
 
-        \part{}
+        \part{How does the bias estimation compare to least squares solution? How the bias estimate compare to the Recursive Least Squares solution if you make the covariance ($Q_d$) of the bias estimates equal to zero?}
 
-        \part{}
+        \part{Integrate the last 40 seconds of data to see how well you have estimated the biases. This can simply be done by "turning off" the measurements in the observation matrix! Why do the bias estimates remain constant during the 40 second "outage"?}
 
     \end{parts}
     \clearpage
-    \question{}
+    \question{Estimator for Vehicle Dynamics. The yaw dynamics of a car (for a stability control system) can be described by the following model (at $25~\frac{m}{s}$):
+        \begin{equation*}
+            \begin{split}
+                \dot{X} & =
+                \begin{bmatrix}
+                    -2.62 & 12 \\
+                    -0.96 & -2 \\
+                \end{bmatrix}
+                \begin{bmatrix}
+                    \dot{\psi} \\
+                    \beta      \\
+                \end{bmatrix} +
+                \begin{bmatrix}
+                    14 \\
+                    1  \\
+                \end{bmatrix}
+                \delta\\
+                y_k & =
+                \begin{bmatrix}
+                    1 & 0 \\
+                \end{bmatrix}
+                X_k + \nu_k\\
+            \end{split}
+        \end{equation*}
+        where:
+        \begin{equation*}
+            \begin{split}
+                \dot{psi} & = \text{Vehicle Yaw Rate}\\
+                \beta & = \text{Vehicle Sideslip Angle}\\
+                \delta & = \text{Steer Angle}\\
+                \nu_k & = \text{Sample Sensor Noise}\\
+            \end{split}
+        \end{equation*}
+    }
     \begin{parts}
-        \part{}
+        \part{Assuming we can only measure the yaw rate $(\nu_k \sim N[0,(0.1)^2 ])$, design a Kalman filter to do full state estimation (select a reasonable $Q_d$ ). Provide a unit step steer input and estimate both states. On one page plot the actual states and estimated states (use $>>subplot(2,2,n)$ for each of the two states). Where are the steady state poles of the estimator?
 
-        \part{}
+            Now, somebody has loaded the trunk of the vehicle with bricks, changing the CG of the vehicle so now the actual model (at $25~\frac{m}{s}$) is:
+            \begin{equation*}
+                \begin{split}
+                    \dot{X} & =
+                    \begin{bmatrix}
+                        -2.42 & 4  \\
+                        -0.99 & -2 \\
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                        \dot{\psi} \\
+                        \beta      \\
+                    \end{bmatrix} +
+                    \begin{bmatrix}
+                        18 \\
+                        1  \\
+                    \end{bmatrix} \delta\\
+                    y_k & =
+                    \begin{bmatrix}
+                        1 & 0 \\
+                    \end{bmatrix}
+                    X_k + \nu_k\\
+                \end{split}
+            \end{equation*}
+            Note: We do not know that somebody has loaded the trunk and that the CG has changed, therefore we must use the model of part (a) in our Kalman filter.
+        }
 
-        \part{}
+        \part{Redo part (a). Can you estimate the slip angle correctly? Try various $Q_d$.}
 
-        \part{}
+        \part{Now lets say we have a noisy measurement of the slip angle ($\eta_k \sim N\left[0,0.5^2\right]$):
+            \[
+                y_k =
+                \begin{bmatrix}
+                    1 & 0 \\
+                    0 & 1 \\
+                \end{bmatrix} X_k +
+                \begin{bmatrix}
+                    \nu_k  \\
+                    \eta_k \\
+                \end{bmatrix}
+            \]
+            Assuming the sensor noises are uncorrelated, what is $R$?}
+
+        \part{Redo part (a). What is the effect of changing the element of $Q_d$ associated with the slip angle estimate. What must $Q_d$ equal to ensure an unbiased estimate of the states (How much filtering does that provide)?}
 
     \end{parts}
     \clearpage
-    \question{}
+    \question{(\textbf{OPTIONAL}) Estimator of a non-minimum phase system. Consider the system dynamics
+        \begin{equation*}
+            \begin{split}
+                \dot{x_1} & = w\\
+                \dot{x_2} & = -x_1 - 2x_2 + w\\
+            \end{split}
+        \end{equation*}
+        with continuous measurements $y(t) = x_2(t) + v(t)$. The measurements and process noise are both independent white noise processes (spectral densities $R_v$ and $R_w$ respectively).
+    }
     \begin{parts}
-        \part{}
+        \part{Find the transfer function $G_{yw}(s)$ from $w(s)$ to $y(s)$ and identify the poles and zeros. Recall that right-half place zeros are called non-minimum phase.}
 
-        \part{}
+        \part{Use this transfer function to sketch the symmetric root locus for the time-invariant estimator poles vs. $\frac{R_w}{R_v}$. Clearly demonstrate that one of the estimator poles tends towards $s  = -1\;\text{as}\;\frac{R_v}{R_w} \rightarrow 0$, even though there is no zero there (only a reflected one). Confirm that this implies that part of the estimation error will attenuate faster than $e^-t$ even with noise-free measurements.}
 
-        \part{}
+        \part{Use the solution of the steady-state Riccati equation to show that as $\frac{R_v}{R_w} \rightarrow 0$, the
+            \begin{equation*}
+                P \rightarrow
+                \begin{bmatrix}
+                    2R_w            & -\sqrt{R_w R_v} \\
+                    -\sqrt{R_w R_v} & \sqrt{R_w R_v}  \\
+                \end{bmatrix}
+            \end{equation*}}
 
-        \part{}
+        \part{Use this results to confirm that $x_1$ can not be estimated perfectly, even with
+            $R_v \rightarrow 0$.}
 
-        \part{}
+        \part{Comment on the impact of the non-minimum phase zero on our ability to estimate this system's state.}
     \end{parts}
 \end{questions}
 
