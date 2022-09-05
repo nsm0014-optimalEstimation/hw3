@@ -63,11 +63,14 @@
     \begin{parts}
         \part{Run the Kalman filter estimator with $Q_d = 0$. What at happens when $t$ becomes greater than 100 seconds? Why? Calculate the steady state Kalman gain $L_{ss}$. Plot $L(k)$. This is known as the filter "going to sleep" (i.e. becomes a least squares estimator). }
 
-        \part{To offset this problem}
+        \part{To offset this problem we will "tune" $Q_d$ to track the bias. What is the effect of changing $Q_d$ on the ability to track the step change in the bias? Try values of $Q_d$ from $0.0001$ to $0.01$ and plot $L(k)$ as well as the estimate of the bias $(\hat{x})$. What is the trade-off?}
 
-        \part{}
+        \part{Now filter the measurement using the first-order low-pass filter 
+        \[H(z)=  \frac{\sqrt{Q_d}}{z - \left(1 - \sqrt{Q_d}\right)} \]
+        Use the command: 
+        \[yf = filter(numd,dend,y,y0)\]}
 
-        \part{}
+        \part{How does this compare to the Kalman filter solution? Why are these two filters the same for this problem.}
     \end{parts}
     \clearpage
     \question{}
