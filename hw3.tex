@@ -42,10 +42,44 @@
     \begin{parts}
         \part{Simulate the controlled system with the disturbance force $\left(1\sigma = 2\right)$ and a sampled sensor noise $\left(1\sigma = 1\right)$ for 100 seconds at a 10~Hz sample rate.}
 
+        \solution{%
+            We can setup the simulation by writing out our continuous model (Equation \ref{eq:1}) and measurement model (Equation \ref{eq:2}) and then evaluating both models over a period of 100 seconds with a sample rate of 1 Hertz.
+            \begin{equation}
+                \mathbf{\dot{x}} = \mathbf{A}_{CL}\mathbf{x} + \mathbf{B}_ww
+                \label{eq:1}
+            \end{equation}
+            Where $\mathbf{\dot{x}}$ is the change in position and velocity over a sample, $\mathbf{A}_{CL}$ is our closed-loop dynamic model, $\mathbf{x}$ is our current position and velocity, $\mathbf{B}_w$ is input disturbance matrix, and $w$ is our process noise.
+            \begin{equation}
+                \mathbf{Y} = \mathbf{C}\mathbf{x} + \eta
+                \label{eq:2}
+            \end{equation}
+            Where $\mathbf{Y}$ is our measurement of position, $\mathbf{C}$ is our output matrix, and $\eta$ is our sensor noise.
+            \begin{figure}[!h]
+                \centering
+                \includegraphics[width=0.85\linewidth]{Q1_simulation.png}
+                \caption{Actual and measured position simulated over 100 seconds with a 0.1 second time step.}
+                \label{fig:1}
+            \end{figure}
+        }
+        \clearpage
         \part{What is $Q$,$Q_d$, and $R_d$?}
 
+        \solution{%
+            We know $Q$ to be the variance of the process noise, or $E\left[ww^T\right]$. Executing this expectation tells us that \[Q \approx 4. \]
+            $Q_d$ is the process noise over time and can be evaulated with $\mathbf{B}_wQ\mathbf{B}_w^T\delta t$. This leads us to find that
+            \[Q_d \approx
+                \begin{bmatrix}
+                    0 & 0   \\
+                    0 & 0.4 \\
+                \end{bmatrix}. \]
+            $R_d$ is similar to $Q$ but instead of the process noise, it is the variance of the sensor noise. We can approximate $R_d$ as \[R_d \approx 1 \]
+        }
         \part{Calculate the steady state Kalman gain for the system. This can be done in one of many ways: iterate the Kalman filter unit it converges, $dlqe.m$, $dare.m$, $kalman.m$, $dlqr.m$ ($+$ predictor to current estimator trick), etc.
             What is the steady state covariance of the estimates after the time update, $P^{(-)}$, as well as after the measurement update,$P^{(+)}$? Where are the poles of the estimator?}
+
+            \solution{%
+            
+            }
 
         \part{Now use the steady state Kalman filter to generate an estimate $\big(\hat{x}\;\text{and}\;\hat{\dot{x}}\big)$ of the 2 states over time. Calculate the norm of the standard deviation of the errors of each state. \[N = \sqrt{\big(std\big(\dot{x} - \hat{\dot{x}}\big)\big)^2 + \left(std\big(x - \hat{x}\big)\right)^2} \]}
 
