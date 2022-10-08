@@ -16,7 +16,7 @@ plotFontSize = 14;
 % State Space System
 A_CL = [0 1;-1 -1.4]; % Closed-Loop A-Matrix
 
-A_d = expm(A_CL'); % X = e^(At)
+
 B = [0;1];
 C = [1 0];
 
@@ -64,6 +64,10 @@ R_d = mean(R);
 
 %% Begin Problem 1 Part C
 
+% Defining discrete dynamic model
+trick = expm([-A_CL (B*Q*B');zeros(2) A_CL']*dt);
+A_d = trick(3:4,3:4)';
+Q_d = A_d*trick(1:2,3:4);
 % Pre-allocating for speed
 X_hat = zeros(2,length(tSequence));
 P = eye(2);

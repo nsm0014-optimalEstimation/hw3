@@ -62,23 +62,84 @@
             \end{figure}
         }
         \clearpage
-        \part{What is $Q$,$Q_d$, and $R_d$?}
+        \part{What is $Q$,$\mathbf{Q}_d$, and $R_d$?}
 
         \solution{%
-            We know $Q$ to be the variance of the process noise, or $E\left[ww^T\right]$. Executing this expectation tells us that \[Q \approx 4. \]
-            $Q_d$ is the process noise over time and can be evaulated with $\mathbf{B}_wQ\mathbf{B}_w^T\delta t$. This leads us to find that
-            \[Q_d \approx
+        We know $Q$ to be the variance of the process noise, or $E\left[ww^T\right]$. Executing this expectation tells us that \[Q \approx 4. \]
+        $\mathbf{Q}_d$ is the discrete process noise and can be evaulated by first finding the discrete dynamic model, $A_d$. We can determine $A_d$ by usings Bryson's trick as seen in Equation \ref{eq:3}.
+        \begin{equation}
+            \begin{split}
+                \mathbf{A}_d & = \left(e^{\mathbf{s}\Delta t}_{2,2}\right)^T\\
+                \mathbf{s} & =
                 \begin{bmatrix}
-                    0 & 0   \\
-                    0 & 0.4 \\
-                \end{bmatrix}. \]
-            $R_d$ is similar to $Q$ but instead of the process noise, it is the variance of the sensor noise. We can approximate $R_d$ as \[R_d \approx 1. \]
+                    -\mathbf{A}_{CL} & \left(\mathbf{B}_w Q \mathbf{B}_w\right) \\
+                    0                & \mathbf{A}_{CL}^T                        \\
+                \end{bmatrix} \\
+                & =
+                \begin{bmatrix}
+                    0 & -1  & 0 & 0    \\
+                    1 & 1.4 & 0 & 40   \\
+                    0 & 0   & 0 & -1   \\
+                    0 & 0   & 1 & -1.4 \\
+                \end{bmatrix} \\
+                \mathbf{s}\Delta t & =
+                \begin{bmatrix}
+                    0  & -.1 & 0  & 0    \\
+                    .1 & .14 & 0  & 0.4  \\
+                    0  & 0   & 0  & -.1  \\
+                    0  & 0   & .1 & -.14 \\
+                \end{bmatrix} \\
+                e^{\mathbf{s}\Delta t} & =
+                \begin{bmatrix}
+                    0.994 & -0.107 & -0.001 & -0.021 \\
+                    0.107 & 1.144  & 0.021  & 0.431  \\
+                    0     & 0      & 0.995  & -0.093 \\
+                    0     & 0      & 0.093  & 0.864  \\
+                \end{bmatrix} \\
+                \mathbf{A}_d & =
+                \begin{bmatrix}
+                    0.995  & 0.093 \\
+                    -0.093 & 0.864 \\
+                \end{bmatrix}\\
+            \end{split}
+            \label{eq:3}
+        \end{equation}
+        From Equation \ref{eq:3} we can calculate the discrete process noise as $\mathbf{Q}_d = \mathbf{A}_de^{\mathbf{s}\Delta t}_{1,2}$.
+        \begin{equation}
+            \begin{split}
+                \mathbf{Q}_d & =
+                \begin{bmatrix}
+                    0 & 0    \\
+                    0 & 0.43 \\
+                \end{bmatrix} \\
+            \end{split}
+            \label{eq:4}
+        \end{equation}
+        $R_d$ is similar to $Q$ but instead of the process noise, it is the variance of the sensor noise. We can approximate $R_d$ as \[R_d \approx 1. \]
         }
         \part{Calculate the steady state Kalman gain for the system. This can be done in one of many ways: iterate the Kalman filter unit it converges, $dlqe.m$, $dare.m$, $kalman.m$, $dlqr.m$ ($+$ predictor to current estimator trick), etc.
             What is the steady state covariance of the estimates after the time update, $P^{(-)}$, as well as after the measurement update,$P^{(+)}$? Where are the poles of the estimator?}
 
         \solution{%
+            In order to add the Kalman Filter to our existing model, we need to install a time update and measurement update with \textit{a priori} and \textit{a posteriori} covariance estimate to change our Kalman gains as we iterate through time (Equation \ref{eq:5},\ref{eq:6}). Keep in mind, for the following equations, I signify the time update with a superscript $t$ and a measurement update with a superscript $m$. These are typically listed as $-$ and $+$, respectively.
+            \begin{equation}
+                \text{Time Update}
+                \begin{split}
+                    \mathbf{\hat{x}}^t_k & = \mathbf{A}_d \mathbf{\hat{x}}^m_{k-1} \\
+                    \mathbf{P}^t_k & = \mathbf{A}_d \mathbf{P}^m_k \mathbf{A}_d^T + \mathbf{Q}_k\\
+                \end{split}
+                \label{eq:5}
+            \end{equation}
 
+            \begin{equation}
+                \text{Measurement Update}
+                \begin{split}
+                    \mathbf{L}_k & = \mathbf{P}^t_k \mathbf{C}^T_d \left(\mathbf{C}_d \mathbf{P}^t_k \mathbf{C}_d^T + R_k\right)^{-1}\\
+                    \mathbf{P}^m_k & = \left(\mathbf{I} - \mathbf{L}_k \mathbf{C}_d\right)\mathbf{P}^t_k \\
+                    \mathbf{\hat{x}}^m_k & = \mathbf{\hat{x}}^t_k + \mathbf{L}_k \left(Y_k - \mathbf{C}_d \mathbf{\hat{x}}^t_k\right) \\
+                \end{split}
+                \label{eq:6}
+            \end{equation}
         }
 
         \part{Now use the steady state Kalman filter to generate an estimate $\big(\hat{x}\;\text{and}\;\hat{\dot{x}}\big)$ of the 2 states over time. Calculate the norm of the standard deviation of the errors of each state. \[N = \sqrt{\big(std\big(\dot{x} - \hat{\dot{x}}\big)\big)^2 + \left(std\big(x - \hat{x}\big)\right)^2} \]}
