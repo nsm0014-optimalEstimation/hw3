@@ -72,14 +72,14 @@
                     0 & 0   \\
                     0 & 0.4 \\
                 \end{bmatrix}. \]
-            $R_d$ is similar to $Q$ but instead of the process noise, it is the variance of the sensor noise. We can approximate $R_d$ as \[R_d \approx 1 \]
+            $R_d$ is similar to $Q$ but instead of the process noise, it is the variance of the sensor noise. We can approximate $R_d$ as \[R_d \approx 1. \]
         }
         \part{Calculate the steady state Kalman gain for the system. This can be done in one of many ways: iterate the Kalman filter unit it converges, $dlqe.m$, $dare.m$, $kalman.m$, $dlqr.m$ ($+$ predictor to current estimator trick), etc.
             What is the steady state covariance of the estimates after the time update, $P^{(-)}$, as well as after the measurement update,$P^{(+)}$? Where are the poles of the estimator?}
 
-            \solution{%
-            
-            }
+        \solution{%
+
+        }
 
         \part{Now use the steady state Kalman filter to generate an estimate $\big(\hat{x}\;\text{and}\;\hat{\dot{x}}\big)$ of the 2 states over time. Calculate the norm of the standard deviation of the errors of each state. \[N = \sqrt{\big(std\big(\dot{x} - \hat{\dot{x}}\big)\big)^2 + \left(std\big(x - \hat{x}\big)\right)^2} \]}
 
