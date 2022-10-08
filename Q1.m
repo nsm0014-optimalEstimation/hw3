@@ -30,14 +30,14 @@ R = zeros(1,length(tSequence));
 
 % Beginning Simulation
 for i = 1:length(tSequence)
-    
+
     % Simulating Process Noise
     w(i) = 2*randn();
     Q(i) = mean(w(i)*w(i)');
 
     % Simulating Sensor Noise
     eta(i) = randn();
-    R(i) = mean(eta(i)*eta(i)'); 
+    R(i) = mean(eta(i)*eta(i)');
     % Simulation is Continuous
     X_dot = A_CL*X(:,i) + B*w(i);
     X(:,i+1) = X_dot*dt + X(:,i);
@@ -105,9 +105,50 @@ gainFig = figure('Position',[500 250 1000 600],'Name','Continuous Model simulati
 hold on
 plot(tSequence(2:end),L_k(1,:),'LineWidth',2)
 plot(tSequence(2:end),L_k(2,:),'LineWidth',2)
-legend('Gain 1','Gain 2')
+legend('Gain 1','Gain 2','Location','best')
 ylabel('Gain Values')
 % ylim([-4 4])
 xlabel('Time [s]')
 fontsize(gainFig,plotFontSize,"points")
 saveas(gainFig,'Q1_gain.png')
+
+%% Problem 1 Part D
+N = sqrt((std(X(1,2:end) - X_hat(1,:)))^2 + ((std(X(2,2:end) - X_hat(2,:))))^2)
+
+%% Begin Problem 1 Part E
+Q = linspace(0,4,25);
+R_d = linspace(0,1,25);
+for k = 1:length(Q)
+    for j = 1:length(R_d)
+        % Defining discrete dynamic model
+        trick = expm([-A_CL (B*Q(k)*B');zeros(2) A_CL']*dt);
+        A_d = trick(3:4,3:4)';
+        Q_d = A_d*trick(1:2,3:4);
+        % Pre-allocating for speed
+        X_hat = zeros(2,length(tSequence));
+        P = eye(2);
+        P_minus = zeros(2,2,length(tSequence)-1);
+        P_plus = zeros(2,2,length(tSequence)-1);
+        L_k = zeros(2,length(tSequence)-1);
+
+        % Beginning Kalman Filter Simulation
+        for i = 1:length(tSequence)-1
+
+            % Time Update
+            X_hat(:,i+1) = A_d*X_hat(:,i);
+            P_minus(:,:,i+1) = A_d*P_plus(:,:,i)*A_d' + Q_d;
+
+            % Measurement Update
+            L_k(:,i) = P_minus(:,:,i+1)*C'*(C*P_minus(:,:,i+1)*C' + R_d(j))^-1;
+            P_plus(:,:,i+1)  = (eye(2) - L_k(:,i)*C)*P_minus(:,:,i+1);
+            X_hat(:,i+1) = X_hat(:,i+1) + L_k(:,i)*(Y(i) - C*X_hat(:,i+1));
+
+        end
+        N(j,k) = sqrt((std(X(1,2:end) - X_hat(1,:)))^2 + ((std(X(2,2:end) - X_hat(2,:))))^2);
+    end
+end
+[minNR,Rindx] = min(N)
+[minNQ,Qindx] = min(min(N))
+LowR = R_d(Rindx(Qindx))
+LowQ = Q(Qindx)
+QR = LowQ/LowR

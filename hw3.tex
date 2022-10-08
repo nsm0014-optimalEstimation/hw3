@@ -121,33 +121,87 @@
             What is the steady state covariance of the estimates after the time update, $P^{(-)}$, as well as after the measurement update,$P^{(+)}$? Where are the poles of the estimator?}
 
         \solution{%
-            In order to add the Kalman Filter to our existing model, we need to install a time update and measurement update with \textit{a priori} and \textit{a posteriori} covariance estimate to change our Kalman gains as we iterate through time (Equation \ref{eq:5},\ref{eq:6}). Keep in mind, for the following equations, I signify the time update with a superscript $t$ and a measurement update with a superscript $m$. These are typically listed as $-$ and $+$, respectively.
-            \begin{equation}
-                \text{Time Update}
-                \begin{split}
-                    \mathbf{\hat{x}}^t_k & = \mathbf{A}_d \mathbf{\hat{x}}^m_{k-1} \\
-                    \mathbf{P}^t_k & = \mathbf{A}_d \mathbf{P}^m_k \mathbf{A}_d^T + \mathbf{Q}_k\\
-                \end{split}
-                \label{eq:5}
-            \end{equation}
+        In order to add the Kalman Filter to our existing model, we need to install a time update and measurement update with \textit{a priori} and \textit{a posteriori} covariance estimate to change our Kalman gains as we iterate through time (Equation \ref{eq:5},\ref{eq:6}). Keep in mind, for the following equations, I signify the time update with a superscript $t$ and a measurement update with a superscript $m$. These are typically listed as $-$ and $+$, respectively.
+        \begin{equation}
+            \begin{split}
+                \text{Time} \;&\; \text{Update}\\
+                \mathbf{\hat{x}}^t_k & = \mathbf{A}_d \mathbf{\hat{x}}^m_{k-1} \\
+                \mathbf{P}^t_k & = \mathbf{A}_d \mathbf{P}^m_k \mathbf{A}_d^T + \mathbf{Q}_k\\
+            \end{split}
+            \label{eq:5}
+        \end{equation}
 
-            \begin{equation}
-                \text{Measurement Update}
-                \begin{split}
-                    \mathbf{L}_k & = \mathbf{P}^t_k \mathbf{C}^T_d \left(\mathbf{C}_d \mathbf{P}^t_k \mathbf{C}_d^T + R_k\right)^{-1}\\
-                    \mathbf{P}^m_k & = \left(\mathbf{I} - \mathbf{L}_k \mathbf{C}_d\right)\mathbf{P}^t_k \\
-                    \mathbf{\hat{x}}^m_k & = \mathbf{\hat{x}}^t_k + \mathbf{L}_k \left(Y_k - \mathbf{C}_d \mathbf{\hat{x}}^t_k\right) \\
-                \end{split}
-                \label{eq:6}
-            \end{equation}
+        \begin{equation}
+            \begin{split}
+                \text{Measurement} \;&\; \text{Update}\\
+                \mathbf{L}_k & = \mathbf{P}^t_k \mathbf{C}^T_d \left(\mathbf{C}_d \mathbf{P}^t_k \mathbf{C}_d^T + R_k\right)^{-1}\\
+                \mathbf{P}^m_k & = \left(\mathbf{I} - \mathbf{L}_k \mathbf{C}_d\right)\mathbf{P}^t_k \\
+                \mathbf{\hat{x}}^m_k & = \mathbf{\hat{x}}^t_k + \mathbf{L}_k \left(Y_k - \mathbf{C}_d \mathbf{\hat{x}}^t_k\right) \\
+            \end{split}
+            \label{eq:6}
+        \end{equation}
+        From Figure \ref{fig:2} we see that the steady state Kalman gains, $\mathbf{L}_{k_{ss}}$, settle to
+        $\begin{bmatrix}
+                0.196 \\
+                0.212 \\
+            \end{bmatrix}$.
+
+        \begin{figure}[!h]
+            \centering
+            \includegraphics[width=0.60\linewidth]{Q1_gain.png}
+            \caption{Values of $\mathbf{L}_k$ as time increases.}
+            \label{fig:2}
+        \end{figure}
+
+        We also find that steady state \textit{a priori} covariance matrix equals
+        \[ \mathbf{P}^t_k =
+            \begin{bmatrix}
+                0.23857 & 0.2583 \\
+                0.2583  & 1.0723 \\
+            \end{bmatrix} \]
+        and that the steady state \textit{a posteriori} covariance matrix is equal to
+        \[ \mathbf{P}^m_k =
+            \begin{bmatrix}
+                0.19187 & 0.20773 \\
+                0.20773 & 1.0175  \\
+            \end{bmatrix} \]
+
+        In order to find the poles of the estimator, we can find the eigenvalues of our estimator $\mathbf{A}$ matrix that I will call $\mathbf{A}_o$.
+        \begin{equation}
+            \begin{split}
+                \mathbf{A}_o & = \mathbf{A}_d - \mathbf{L}_{k_{ss}}\mathbf{C}\\
+                \mathbf{A}_o & =
+                \begin{bmatrix}
+                    0.799  & 0.093 \\
+                    -0.305 & 0.864 \\
+                \end{bmatrix}
+            \end{split}
+            \label{eq:7}
+        \end{equation}
+        Then simply using $>>eig$ in MATLAB produces estimator poles of
+        \[s_{1,2} = 0.83213 \pm 0.1654i \]
         }
-
+        \clearpage
         \part{Now use the steady state Kalman filter to generate an estimate $\big(\hat{x}\;\text{and}\;\hat{\dot{x}}\big)$ of the 2 states over time. Calculate the norm of the standard deviation of the errors of each state. \[N = \sqrt{\big(std\big(\dot{x} - \hat{\dot{x}}\big)\big)^2 + \left(std\big(x - \hat{x}\big)\right)^2} \]}
 
+        \solution{%
+            \begin{figure}[!h]
+                \centering
+                \includegraphics[width=\linewidth]{Q1_filter.png}
+                \caption{Filtered Position versus Actual Position}
+                \label{fig:3}
+            \end{figure}
+
+            Using the equation provided we calculate a value of $N = 0.58579$.
+        }
         \part{%
             Change the ratio of the $Q$ and $R$ weights in the Kalman filter design (and repeat part (d) with new Kalman gain but DO NOT regenerate a new $x$ and $\dot{x}$) and determine the effect on the estimation errors. For what ratio of $Q$ and $R_d$ are the errors minimized?
 
             Note: Often in practice we do not know the actual $Q$ and $R_d$ so these tend to be "tuning" parameters we can use to tune our filter. However, according to Kalman, the estimation errors are only minimized if we use the $Q$ and $R_d$ of the physical system.}
+
+        \solution{%
+            Using a multivariable minimization function ($>>fmincon$), I found the lowest normalized standard deviation of our state error to be $~0.49$ with $R_d = 0.95$ and $Q = 0.33$. This gives us a $Q$ to $R_d$ ratio of about $0.38$. The trend seems to be that as one lowers the process noise, $N$ will also decrease. I am not sure if $R_d$ had a profounding affect on $N$.
+        }
 
     \end{parts}
     \clearpage
