@@ -212,14 +212,93 @@
     \begin{parts}
         \part{Run the Kalman filter estimator with $Q_d = 0$. What at happens when $t$ becomes greater than 100 seconds? Why? Calculate the steady state Kalman gain $L_{ss}$. Plot $L(k)$. This is known as the filter "going to sleep" (i.e. becomes a least squares estimator). }
 
+        \solution{%
+        After the time becomes greater 100 seconds, the filtered estimate of the position fails. This is because we are assuming no process noise during the simulation. Because of this, the Kalman Filter is expecting a static position and when the bias disappears, the filter is unable to keep up.
+
+        We can estimate the steady state Kalman gain, $L_ss$, by using the following equations from class.
+        \[P^{m}_{ss} = \left[\left(A_d P^{m}_{ss} A_d^T + Q_d\right)^{-1} + C R_d^{-1} C^T\right]^{-1} \]
+        \[L_{ss} = P^{m}_{ss}C^T R_d^{-1} \]
+        After evaluating these equations we get a steady-state Kalman gain of
+        \[L_{ss} = 0.0004995.\]
+        On the next page we can see figures \ref{fig:4} and \ref{fig:5} show the filter 'going to sleep' and the resulting estimate of position.
+
+        \begin{figure}[!h]
+            \centering
+            \includegraphics[width=0.75\linewidth]{Q2_simulation.png}
+            \caption{Kalman Filter 'going to sleep' after the bias is removed from the measured data.}
+            \label{fig:4}
+        \end{figure}
+
+        \begin{figure}[!h]
+            \centering
+            \includegraphics[width=0.75\linewidth]{Q2_gains.png}
+            \caption{Kalman gain as time increases}
+            \label{fig:5}
+        \end{figure}
+
+        \clearpage
+        }
         \part{To offset this problem we will "tune" $Q_d$ to track the bias. What is the effect of changing $Q_d$ on the ability to track the step change in the bias? Try values of $Q_d$ from $0.0001$ to $0.01$ and plot $L(k)$ as well as the estimate of the bias $(\hat{x})$. What is the trade-off?}
+
+        \solution{%
+            For this problem, I simulated the filter over 4 values of $Q$  -- $0.0001$, $0.001$, $0.01$, $0.1$. As the value of $Q$ increased, the filter was able to adapt to the change of the measured position more quickly, as seen in Figure \ref{fig:6}.
+
+            \begin{figure}[!h]
+                \centering
+                \includegraphics[width=\linewidth]{Q2b_simulation.png}
+                \caption{Filtered position estimate for various values of process noise, $Q$.}
+                \label{fig:6}
+            \end{figure}
+            However, also as the value of $Q$ increased, we see an increase in our steady state covariance value (Table \ref{tbl:1}).
+
+            \begin{table}[!h]
+                \centering
+                \caption{Steady-state covariance value for each value of $Q$.}
+                \label{tbl:1}
+                \begin{tabular}{|c|cccc|}
+                    \hline
+                    $Q$      & 0.0001 & 0.001  & 0.01   & 0.1    \\
+                    \hline
+                    $P_{ss}$ & 0.0032 & 0.0100 & 0.0311 & 0.0951 \\
+                    \hline
+                \end{tabular}
+            \end{table}
+
+            Figure \ref{fig:7} shows the Kalman gain values for each iteration of $Q$.
+
+            \begin{figure}[!h]
+                \centering
+                \includegraphics[width=\linewidth]{Q2b_gains.png}
+                \caption{Kalman gain for each value of $Q$.}
+                \label{fig:7}
+            \end{figure}
+        }
+        \clearpage
 
         \part{Now filter the measurement using the first-order low-pass filter
             \[H(z)=  \frac{\sqrt{Q_d}}{z - \left(1 - \sqrt{Q_d}\right)} \]
             Use the command:
             \[yf = filter(numd,dend,y,y0)\]}
 
+        \solution{%
+
+            The following plot was produced with a $Q$ value of $0.1$.
+
+            \begin{figure}[!h]
+                \centering
+                \includegraphics[width=\linewidth]{Q2c_simulation.png}
+                \caption{Comparison of measurements to the Kalman Filter and MATLAB command $>>filter$.}
+                \label{fig:8}
+            \end{figure}
+        }
+        \clearpage
         \part{How does this compare to the Kalman filter solution? Why are these two filters the same for this problem.}
+
+        \solution{%
+            Upon looking at the plot, one can see that the Kalman Filter and $>>filter$ command produce almost identical results. Looking at the documentation for $>>filter$, it seems to use a moving average formula for 1-dimensional data. However, after further analyzing our 1-dimensional Kalman Filter, we seem to be doing the same thing - we formulate some current estimate of the state, compare it with our last estimate of the state, and then correct the current estimate based on our comparison.
+        }
+
+        \clearpage
     \end{parts}
     \clearpage
     \question{Design a “Navigation” type Kalman filter to estimate the states [East, North Radar\_Bias, Psi, Gyro\_Bias]. (Note: this is a non-linear problem that requires an Extended Kalman Filter (EKF) to do correctly.)
