@@ -54,7 +54,7 @@
                 \label{eq:2}
             \end{equation}
             Where $\mathbf{Y}$ is our measurement of position, $\mathbf{C}$ is our output matrix, and $\eta$ is our sensor noise.
-            \begin{figure}[!h]
+            \begin{figure}[!ht]
                 \centering
                 \includegraphics[width=0.85\linewidth]{Q1_simulation.png}
                 \caption{Actual and measured position simulated over 100 seconds with a 0.1 second time step.}
@@ -66,7 +66,7 @@
 
         \solution{%
         We know $Q$ to be the variance of the process noise, or $E\left[ww^T\right]$. Executing this expectation tells us that \[Q \approx 4. \]
-        $\mathbf{Q}_d$ is the discrete process noise and can be evaulated by first finding the discrete dynamic model, $A_d$. We can determine $A_d$ by usings Bryson's trick as seen in Equation \ref{eq:3}.
+        $\mathbf{Q}_d$ is the discrete process noise and can be evaluated by first finding the discrete dynamic model, $A_d$. We can determine $A_d$ by usings Bryson's trick as seen in Equation \ref{eq:3}.
         \begin{equation}
             \begin{split}
                 \mathbf{A}_d & = \left(e^{\mathbf{s}\Delta t}_{2,2}\right)^T\\
@@ -146,7 +146,7 @@
                 0.212 \\
             \end{bmatrix}$.
 
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.60\linewidth]{Q1_gain.png}
             \caption{Values of $\mathbf{L}_k$ as time increases.}
@@ -185,7 +185,7 @@
         \part{Now use the steady state Kalman filter to generate an estimate $\big(\hat{x}\;\text{and}\;\hat{\dot{x}}\big)$ of the 2 states over time. Calculate the norm of the standard deviation of the errors of each state. \[N = \sqrt{\big(std\big(\dot{x} - \hat{\dot{x}}\big)\big)^2 + \left(std\big(x - \hat{x}\big)\right)^2} \]}
 
         \solution{%
-            \begin{figure}[!h]
+            \begin{figure}[!ht]
                 \centering
                 \includegraphics[width=\linewidth]{Q1_filter.png}
                 \caption{Filtered Position versus Actual Position}
@@ -222,14 +222,14 @@
         \[L_{ss} = 0.0004995.\]
         On the next page we can see figures \ref{fig:4} and \ref{fig:5} show the filter 'going to sleep' and the resulting estimate of position.
 
-        \begin{figure}[!h]
+        \begin{figure}[tbp]
             \centering
             \includegraphics[width=0.75\linewidth]{Q2_simulation.png}
             \caption{Kalman Filter 'going to sleep' after the bias is removed from the measured data.}
             \label{fig:4}
         \end{figure}
 
-        \begin{figure}[!h]
+        \begin{figure}[tbp]
             \centering
             \includegraphics[width=0.75\linewidth]{Q2_gains.png}
             \caption{Kalman gain as time increases}
@@ -243,7 +243,7 @@
         \solution{%
             For this problem, I simulated the filter over 4 values of $Q$  -- $0.0001$, $0.001$, $0.01$, $0.1$. As the value of $Q$ increased, the filter was able to adapt to the change of the measured position more quickly, as seen in Figure \ref{fig:6}.
 
-            \begin{figure}[!h]
+            \begin{figure}[!ht]
                 \centering
                 \includegraphics[width=\linewidth]{Q2b_simulation.png}
                 \caption{Filtered position estimate for various values of process noise, $Q$.}
@@ -251,7 +251,7 @@
             \end{figure}
             However, also as the value of $Q$ increased, we see an increase in our steady state covariance value (Table \ref{tbl:1}).
 
-            \begin{table}[!h]
+            \begin{table}[!ht]
                 \centering
                 \caption{Steady-state covariance value for each value of $Q$.}
                 \label{tbl:1}
@@ -266,7 +266,7 @@
 
             Figure \ref{fig:7} shows the Kalman gain values for each iteration of $Q$.
 
-            \begin{figure}[!h]
+            \begin{figure}[!ht]
                 \centering
                 \includegraphics[width=\linewidth]{Q2b_gains.png}
                 \caption{Kalman gain for each value of $Q$.}
@@ -284,7 +284,7 @@
 
             The following plot was produced with a $Q$ value of $0.1$.
 
-            \begin{figure}[!h]
+            \begin{figure}[!ht]
                 \centering
                 \includegraphics[width=\linewidth]{Q2c_simulation.png}
                 \caption{Comparison of measurements to the Kalman Filter and MATLAB command $>>filter$.}
