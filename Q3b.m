@@ -17,12 +17,11 @@ Gyro = data.data(:,5);
 Radar = data.data(:,6);
 dt = 1/5;
 
-H = diag([ones(1,5)]);
+H = [diag([ones(1,3)]) zeros(3,2)];
 
-Qd = diag(0.01*ones(5,1));
+Qd = diag([0.01 0.01 0.01 0 0]);
 
-
-R = Qd(1:5,1:5)*0.01;
+R = Qd(1:3,1:3)*0.01;
 
 X_mea = [East, North, Psi, zeros(length(time),2)]';
 Y_mea = H*X_mea;
@@ -64,19 +63,23 @@ Y_est = H*X;
 %% Least Squares
 
 H_ls = [1 0 0 0 0 0 0; ...
-    0 1 0 0 0 0 0; ...
-    0 0 1 0 0 0 0; ...
-    0 0 0 1 0 1 0; ...
-    0 0 0 0 1 0 1];
+        0 1 0 0 0 0 0; ...
+        0 0 1 0 0 0 0; ...
+        0 0 0 1 0 1 0; ...
+        0 0 0 0 1 0 1];
 
 R_ls = diag(10*ones(5,1));
+
 P_k = diag(ones(7,1)).^2;
+
 x_k = [0.1; 0.1; 0.1; 0.1; 0.1; 0.1; 0.1];
 params = zeros(7, length(data));
+
 params(:,1) = x_k;
+
 y = data.data(:,2:6)';
 
-for m = 1:length(data)
+for m = 1:length(time)
     P_k1 = inv(inv(P_k) + H_ls'*inv(R_ls)*H_ls);
     K_k1 = P_k*H_ls'*inv(H_ls*P_k*H_ls' + R_ls);
     x_k1 = x_k + K_k1*(y(:,m) - H_ls*x_k);
@@ -89,42 +92,47 @@ fig = figure('Position',[500 250 1000 1000]);
 tiledlayout(5,1)
 nexttile
 hold on
-plot(time,X(1,:),'LineWidth',2)
-plot(time,East,'LineWidth',1.5,'LineStyle','-.')
+plot(time,params(1,:),'LineWidth',1.5,'LineStyle','--','Color','#398538')
+plot(time,X(1,:),'LineWidth',2,'Color','#1b79df')
+plot(time,East,'LineWidth',1.5,'LineStyle','-.','Color','#df961b')
 ylabel('Position [m]','FontSize',14)
 title('East','FontSize',14)
-legend('Estimate','Truth',Location='bestoutside',fontsize=14)
+legend('Least Squares','Estimate','Truth',Location='bestoutside',fontsize=14)
 xlim([0 60])
 
 nexttile
 hold on
-plot(time,X(2,:),'LineWidth',2)
-plot(time,North,'LineWidth',1.5,'LineStyle','-.')
+plot(time,params(2,:),'LineWidth',1.5,'LineStyle','--','Color','#398538')
+plot(time,X(2,:),'LineWidth',2,'Color','#1b79df')
+plot(time,North,'LineWidth',1.5,'LineStyle','-.','Color','#df961b')
 ylabel('Position [m]','FontSize',14)
 title('North','FontSize',14)
 xlim([0 60])
 
 nexttile
 hold on
-plot(time,X(3,:).*180/pi,'LineWidth',2)
-plot(time,Psi*180/pi,'LineWidth',1.5,'LineStyle','-.')
+plot(time,params(3,:).*180/pi,'LineWidth',1.5,'LineStyle','--','Color','#398538')
+plot(time,X(3,:).*180/pi,'LineWidth',2,'Color','#1b79df')
+plot(time,Psi*180/pi,'LineWidth',1.5,'LineStyle','-.','Color','#df961b')
 ylabel('Rotation [deg]','FontSize',14)
 title('Heading','FontSize',14)
 xlim([0 60])
     
 nexttile
 hold on
-plot(time,X(4,:).*180/pi,'LineWidth',2)
+plot(time,params(4,:),'LineWidth',1.5,'LineStyle','--','Color','#398538')
+plot(time,X(4,:).*180/pi,'LineWidth',2,'Color','#1b79df')
 ylabel('Bias [m/s]','FontSize',14)
 title('Radar bias','FontSize',14)
 xlim([0 60])
 
 nexttile
 hold on
-plot(time,X(5,:),'LineWidth',2)
+plot(time,params(5,:),'LineWidth',1.5,'LineStyle','--','Color','#398538')
+plot(time,X(5,:),'LineWidth',2,'Color','#1b79df')
 ylabel('Bias [m/s]','FontSize',14)
 title('Gyroscope bias','FontSize',14)
 xlabel('Time [s]','FontSize',14)
 xlim([0 60])
 
-saveas(fig,'Q3filter.png')
+saveas(fig,'Q3filter_b.png')
