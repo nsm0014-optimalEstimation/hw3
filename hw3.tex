@@ -309,12 +309,115 @@
             \item[ii.] simply update the A matrix at every time step with our measurements or estimates
         \end{itemize}
         Download the data \textit{hw3\_3} from the website and run the filter sampled at 5 Hz}
+
+    \solution{%
+        To filter the measurements, I chose option \textit{ii}. Updating the discrete $\mathbf{A}_d$ and $\mathbf{B}_d$ matrices at each time step can be seen in equation \ref{eq:ad} and \ref{eq:bd}.
+
+        \begin{equation}
+            \begin{split}
+                \mathbf{A}_d & =
+                \begin{bmatrix}
+                    1 & 0 & 0 & -\sin(\hat{\psi})\Delta t & 0         \\
+                    0 & 1 & 0 & -\cos(\hat{\psi})\Delta t & 0         \\
+                    0 & 0 & 1 & 0                         & -\Delta t \\
+                    0 & 0 & 0 & 1                         & 0         \\
+                    0 & 0 & 0 & 0                         & 1         \\
+                \end{bmatrix}
+            \end{split}
+            \label{eq:ad}
+        \end{equation}
+
+        \begin{equation}
+            \begin{split}
+                \mathbf{B}_d & =
+                \begin{bmatrix}
+                    \sin(\hat{\psi})\Delta t & 0        \\
+                    \cos(\hat{\psi})\Delta t & 0        \\
+                    0                        & \Delta t \\
+                    0                        & 0        \\
+                    0                        & 0        \\
+                \end{bmatrix}
+            \end{split}
+            \label{eq:bd}
+        \end{equation}
+
+        After updating the discrete $\mathbf{A}_d$ and $\mathbf{B}_d$ matrices, we can proceed with the \textit{Time Update} of the Extended Kalman Filter (Equation \ref{eq:MU}).
+
+        \begin{equation}
+            \begin{split}
+                \mathbf{\hat{x}}^t_k & = \mathbf{A}_d \mathbf{\hat{x}}^m_{k-1} + \mathbf{B}_d \mathbf{U}_{k-1}\\
+                \mathbf{P}^t_k & = \mathbf{A}_d \mathbf{P}^m_k \mathbf{A}_d^T + \mathbf{Q}_k\\
+            \end{split}
+            \label{eq:MU}
+        \end{equation}
+
+        Where $\mathbf{U}_{k-1}$ are the estimated radar and gyroscope sensor biases. Equation \ref{eq:TU} describes the \textit{Measurement Update} of the Extended Kalman Filter.
+
+        \begin{equation}
+            \begin{split}
+                \mathbf{L}_k & = \mathbf{P}^t_k \mathbf{C}^T_d \left(\mathbf{C}_d \mathbf{P}^t_k \mathbf{C}_d^T + R_k\right)^{-1}\\
+                \mathbf{P}^m_k & = \left(\mathbf{I} - \mathbf{L}_k \mathbf{C}_d\right)\mathbf{P}^t_k \\
+                \mathbf{\hat{x}}^m_k & = \mathbf{\hat{x}}^t_k + \mathbf{L}_k \left(Y_k - \mathbf{C}_d \mathbf{\hat{x}}^t_k\right) \\
+            \end{split}
+            \label{eq:TU}
+        \end{equation}
+
+        After trial and error with choosing the correct process noise matrix ($\mathbf{Q}_d$), we are able to filter the measurements fairly accurately. Figure \ref{fig:Q3} shows the first 60 seconds of the filter running using \textit{hw3\_3} as measurements.
+
+        \begin{figure}[!h]
+            \centering
+            \includegraphics[width=.75\linewidth]{Q3filter.png}
+            \caption{Estimated states using a discrete EKF.}
+            \label{fig:Q3}
+        \end{figure}
+        \clearpage
+    }
     \begin{parts}
-        \part{How did you choose the covariance values for $Q_d$ (especially for the radar and gyro biases)?}
+        \part{How did you choose the covariance values for $\mathbf{Q}_d$ (especially for the radar and gyro biases)?}
 
-        \part{How does the bias estimation compare to least squares solution? How do the bias estimate compare to the Recursive Least Squares solution if you make the covariance ($Q_d$) of the bias estimates equal to zero?}
+        \solution{%
+            Values for $\mathbf{Q}_d$ were determined to be very small because the measurements seem to have little noise on them. The radar and gyro biases were even smaller because the biases were assumed to be constant.
 
+            \begin{equation}
+                \begin{split}
+                    \mathbf{Q}_d & =
+                    \begin{bmatrix}
+                        0.01 & 0    & 0    & 0      & 0      \\
+                        0    & 0.01 & 0    & 0      & 0      \\
+                        0    & 0    & 0.01 & 0      & 0      \\
+                        0    & 0    & 0    & 0.0001 & 0      \\
+                        0    & 0    & 0    & 0      & 0.0001 \\
+                    \end{bmatrix}
+                \end{split}
+                \label{}
+            \end{equation}
+        }
+        \clearpage
+        \part{How does the bias estimation compare to least squares solution? How do the bias estimate compare to the Recursive Least Squares solution if you make the covariance ($\mathbf{Q}_d$) of the bias estimates equal to zero?}
+
+        \solution{%
+            The recursive least squares solution is considerably worse than the Kalman Filter. This is probably because the least squares algorithm assumes a linearized dynamics model compared to a the Extended Kalman Filter where a nonlinear dynamic model is expected.
+
+            \begin{figure}[!h]
+                \centering
+                \includegraphics[width=.75\linewidth]{Q3filter_b.png}
+                \caption{Comparison of Recursive Least Squares and an Extended Kalman Filter}
+                \label{}
+            \end{figure}
+        }
+        \clearpage
         \part{Integrate the last 40 seconds of data to see how well you have estimated the biases. This can simply be done by "turning off" the measurements in the observation matrix! Why do the bias estimates remain constant during the 40 second "outage"?}
+
+        \solution{%
+            The bias remains constant during the 'outage' because the measurement update does not happen. The measurement update is crucial because it updates the covariance matrix that utilizes the radar and gyroscope biases while filtering.
+
+            \begin{figure}[!h]
+                \centering
+                \includegraphics[width=.75\linewidth]{Q3filter_c.png}
+                \caption{Evaluation of Kalman Filter during 40 second 'outage'.}
+                \label{}
+            \end{figure}
+        }
 
     \end{parts}
     \clearpage

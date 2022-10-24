@@ -86,6 +86,7 @@ for m = 1:length(data)
 end
 
 fig = figure('Position',[500 250 1000 1000]);
+
 tiledlayout(5,1)
 nexttile
 hold on
@@ -95,6 +96,8 @@ ylabel('Position [m]','FontSize',14)
 title('East','FontSize',14)
 legend('Estimate','Truth',Location='bestoutside',fontsize=14)
 xlim([0 60])
+ax = gca;
+ax.FontSize = 14;
 
 nexttile
 hold on
@@ -103,6 +106,8 @@ plot(time,North,'LineWidth',1.5,'LineStyle','-.')
 ylabel('Position [m]','FontSize',14)
 title('North','FontSize',14)
 xlim([0 60])
+ax = gca;
+ax.FontSize = 14;
 
 nexttile
 hold on
@@ -111,6 +116,8 @@ plot(time,Psi*180/pi,'LineWidth',1.5,'LineStyle','-.')
 ylabel('Rotation [deg]','FontSize',14)
 title('Heading','FontSize',14)
 xlim([0 60])
+ax = gca;
+ax.FontSize = 14;
     
 nexttile
 hold on
@@ -118,6 +125,8 @@ plot(time,X(4,:).*180/pi,'LineWidth',2)
 ylabel('Bias [m/s]','FontSize',14)
 title('Radar bias','FontSize',14)
 xlim([0 60])
+ax = gca;
+ax.FontSize = 14;
 
 nexttile
 hold on
@@ -127,4 +136,6 @@ title('Gyroscope bias','FontSize',14)
 xlabel('Time [s]','FontSize',14)
 xlim([0 60])
 
+ax = gca;
+ax.FontSize = 14;
 saveas(fig,'Q3filter.png')
