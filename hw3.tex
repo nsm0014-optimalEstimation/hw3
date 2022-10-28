@@ -362,6 +362,7 @@
             \label{eq:TU}
         \end{equation}
 
+
         After trial and error with choosing the correct process noise matrix ($\mathbf{Q}_d$), we are able to filter the measurements fairly accurately. Figure \ref{fig:Q3} shows the first 60 seconds of the filter running using \textit{hw3\_3} as measurements.
 
         \begin{figure}[!h]
@@ -507,7 +508,13 @@
         \part{Redo part (a). Can you estimate the slip angle correctly? Try various $Q_d$.}
 
         \solution{%
-
+            The steady-state error between the original Kalman Filter and the new dynamic model is slightly larger even after changing $\mathbf{Q}_d$ for different values.
+            \begin{figure}[!h]
+                \centering
+                \includegraphics[width=\linewidth]{Q4b.png}
+                \caption{Comparison of original Kalman Filter with new dynamic model.}
+                \label{fig:Q4b}
+            \end{figure}
         }
 
         \part{Now lets say we have a noisy measurement of the slip angle ($\eta_k \sim N\left[0,0.5^2\right]$):
