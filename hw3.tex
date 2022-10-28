@@ -508,15 +508,16 @@
         \part{Redo part (a). Can you estimate the slip angle correctly? Try various $Q_d$.}
 
         \solution{%
-            The steady-state error between the original Kalman Filter and the new dynamic model is slightly larger even after changing $\mathbf{Q}_d$ for different values.
+            The steady-state error between the original Kalman Filter and the new dynamic model is slightly smaller after changing $\mathbf{Q}_d$ to be slightly smaller. From the change in system, we also get the poles of the Kalman gain to be
+            \[s_{L_{ss}} = -2.7039 \pm 1.8905i \]
             \begin{figure}[!h]
                 \centering
-                \includegraphics[width=\linewidth]{Q4b.png}
+                \includegraphics[width=0.85\linewidth]{Q4b.png}
                 \caption{Comparison of original Kalman Filter with new dynamic model.}
                 \label{fig:Q4b}
             \end{figure}
         }
-
+        \clearpage
         \part{Now lets say we have a noisy measurement of the slip angle ($\eta_k \sim N\left[0,0.5^2\right]$):
             \[
                 y_k =
@@ -531,7 +532,32 @@
             \]
             Assuming the sensor noises are uncorrelated, what is $R$?}
 
+        \solution{%
+            With a new measurement model, we get an $\mathbf{R}$ matrix of
+            \[\mathbf{R} =
+                \begin{bmatrix}
+                    0.01 & 0    \\
+                    0    & 0.25 \\
+                \end{bmatrix}\]
+            The observability of the second state leads to better estimate of sideslip, as seen in Figure \ref{fig:4c}.
+
+            \begin{figure}[!h]
+                \centering
+                \includegraphics[width=\linewidth]{Q4c.png}
+                \caption{Estimation of model with original observer, new dynamic model, and new measurement model.}
+                \label{fig:4c}
+            \end{figure}
+        }
+
         \part{Redo part (a). What is the effect of changing the element of $Q_d$ associated with the slip angle estimate. What must $Q_d$ equal to ensure an unbiased estimate of the states (How much filtering does that provide)?}
+
+        \solution{%
+            As we can see from Figure \ref{fig:4c}, the effect that $\mathbf{Q}_d$ has on the estimation is substantial. Before changing our process noise matrix, we saw that the estimator was not able to track sideslip very well; However, increasing the index of $\mathbf{Q}_d$ directly corresponding to the sideslip state allowed us to track better, but at the cost of added noise.
+
+            When changing the $\mathbf{Q}_d$ we calculate the poles of the steady-state Kalman gain to be
+            \[s_{L_{ss}} = -2.7466 \pm     1.8896i \]
+
+        }
 
     \end{parts}
     \clearpage
