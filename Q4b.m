@@ -23,11 +23,11 @@ measurement_noise = gaussianDistFCN([length(t) 1],0.1,0);
 BT = [-A_c B_c*Q_c*B_c'; zeros(2) A_c'];
 BT = expm(BT*dt);
 
-A_d = BT(3:4,3:4)';
-Q_d = A_d*BT(1:2,3:4);
-B_d = B_c*dt;
+A_da = BT(3:4,3:4)';
+Q_d = A_da*BT(1:2,3:4);
+% B_d = B_c*dt;
 C_d = C_c;
-R_d = 0.01;
+R_d = 0.05;
 
 steer_angle = [zeros(5,1); ones(46,1)];
 
@@ -38,6 +38,20 @@ y = zeros(1,length(t));
 x_plus = zeros(2,length(t));
 P_plus = zeros(2,2);
 
+% Part b - updated dynamic model
+A_c = [-2.42 4;-0.99 -2];
+B_c = [18;1];
+C_c = [1 0];
+
+
+
+
+BT = [-A_c B_c*Q_c*B_c'; zeros(2) A_c'];
+BT = expm(BT*dt);
+
+A_d = BT(3:4,3:4)';
+B_d = B_c*dt;
+
 for i = 2:length(t)
 
     % Modeling System
@@ -45,8 +59,8 @@ for i = 2:length(t)
     y(i) = C_d*x(:,i) + measurement_noise(i);
 
     % Modeling Observer
-    x_minus = A_d*x_plus(:,i-1);
-    P_minus = A_d*P_plus*A_d' + Q_d;
+    x_minus = A_da*x_plus(:,i-1);
+    P_minus = A_da*P_plus*A_da' + Q_d;
 
     L = P_minus*C_d'*(C_d*P_minus*C_d' + R_d)^-1;
     P_plus = (eye(2) - L*C_d)*P_minus;
@@ -56,7 +70,7 @@ for i = 2:length(t)
 end
 L_ss_poles = eig(A_c - L*C_d)
 %% Plotting
-figQ4a = figure('Position',[250 100 1000 600]);
+figQ4b = figure('Position',[250 100 1000 600]);
 tiledlayout(2,1)
 
 nexttile
@@ -79,4 +93,4 @@ legend('Estimate','Truth',Location='northeast')
 ax = gca;
 ax.FontSize = 16;
 
-saveas(figQ4a,'Q4a.png')
+saveas(figQ4b,'Q4b.png')

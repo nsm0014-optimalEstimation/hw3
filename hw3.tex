@@ -43,22 +43,22 @@
         \part{Simulate the controlled system with the disturbance force $\left(1\sigma = 2\right)$ and a sampled sensor noise $\left(1\sigma = 1\right)$ for 100 seconds at a 10~Hz sample rate.}
 
         \solution{%
-            We can setup the simulation by writing out our continuous model (Equation \ref{eq:1}) and measurement model (Equation \ref{eq:2}) and then evaluating both models over a period of 100 seconds with a sample rate of 1 Hertz.
+            We can setup the simulation by writing out our continuous model (Equation \ref{eq:11}) and measurement model (Equation \ref{eq:12}) and then evaluating both models over a period of 100 seconds with a sample rate of 1 Hertz.
             \begin{equation}
                 \mathbf{\dot{x}} = \mathbf{A}_{CL}\mathbf{x} + \mathbf{B}_ww
-                \label{eq:1}
+                \label{eq:11}
             \end{equation}
             Where $\mathbf{\dot{x}}$ is the change in position and velocity over a sample, $\mathbf{A}_{CL}$ is our closed-loop dynamic model, $\mathbf{x}$ is our current position and velocity, $\mathbf{B}_w$ is input disturbance matrix, and $w$ is our process noise.
             \begin{equation}
                 \mathbf{Y} = \mathbf{C}\mathbf{x} + \eta
-                \label{eq:2}
+                \label{eq:12}
             \end{equation}
             Where $\mathbf{Y}$ is our measurement of position, $\mathbf{C}$ is our output matrix, and $\eta$ is our sensor noise.
             \begin{figure}[!ht]
                 \centering
                 \includegraphics[width=0.85\linewidth]{Q1_simulation.png}
                 \caption{Actual and measured position simulated over 100 seconds with a 0.1 second time step.}
-                \label{fig:1}
+                \label{fig:13}
             \end{figure}
         }
         \clearpage
@@ -66,7 +66,7 @@
 
         \solution{%
         We know $Q$ to be the variance of the process noise, or $E\left[ww^T\right]$. Executing this expectation tells us that \[Q \approx 4. \]
-        $\mathbf{Q}_d$ is the discrete process noise and can be evaluated by first finding the discrete dynamic model, $A_d$. We can determine $A_d$ by usings Bryson's trick as seen in Equation \ref{eq:3}.
+        $\mathbf{Q}_d$ is the discrete process noise and can be evaluated by first finding the discrete dynamic model, $A_d$. We can determine $A_d$ by usings Bryson's trick as seen in Equation \ref{eq:14}.
         \begin{equation}
             \begin{split}
                 \mathbf{A}_d & = \left(e^{\mathbf{s}\Delta t}_{2,2}\right)^T\\
@@ -102,9 +102,9 @@
                     -0.093 & 0.864 \\
                 \end{bmatrix}\\
             \end{split}
-            \label{eq:3}
+            \label{eq:14}
         \end{equation}
-        From Equation \ref{eq:3} we can calculate the discrete process noise as $\mathbf{Q}_d = \mathbf{A}_de^{\mathbf{s}\Delta t}_{1,2}$.
+        From Equation \ref{eq:14} we can calculate the discrete process noise as $\mathbf{Q}_d = \mathbf{A}_de^{\mathbf{s}\Delta t}_{1,2}$.
         \begin{equation}
             \begin{split}
                 \mathbf{Q}_d & =
@@ -113,7 +113,7 @@
                     0 & 0.43 \\
                 \end{bmatrix} \\
             \end{split}
-            \label{eq:4}
+            \label{eq:15}
         \end{equation}
         $R_d$ is similar to $Q$ but instead of the process noise, it is the variance of the sensor noise. We can approximate $R_d$ as \[R_d \approx 1. \]
         }
@@ -121,14 +121,14 @@
             What is the steady state covariance of the estimates after the time update, $P^{(-)}$, as well as after the measurement update,$P^{(+)}$? Where are the poles of the estimator?}
 
         \solution{%
-        In order to add the Kalman Filter to our existing model, we need to install a time update and measurement update with \textit{a priori} and \textit{a posteriori} covariance estimate to change our Kalman gains as we iterate through time (Equation \ref{eq:5},\ref{eq:6}). Keep in mind, for the following equations, I signify the time update with a superscript $t$ and a measurement update with a superscript $m$. These are typically listed as $-$ and $+$, respectively.
+        In order to add the Kalman Filter to our existing model, we need to install a time update and measurement update with \textit{a priori} and \textit{a posteriori} covariance estimate to change our Kalman gains as we iterate through time (Equation \ref{eq:16},\ref{eq:17}). Keep in mind, for the following equations, I signify the time update with a superscript $t$ and a measurement update with a superscript $m$. These are typically listed as $-$ and $+$, respectively.
         \begin{equation}
             \begin{split}
                 \text{Time} \;&\; \text{Update}\\
                 \mathbf{\hat{x}}^t_k & = \mathbf{A}_d \mathbf{\hat{x}}^m_{k-1} \\
                 \mathbf{P}^t_k & = \mathbf{A}_d \mathbf{P}^m_k \mathbf{A}_d^T + \mathbf{Q}_k\\
             \end{split}
-            \label{eq:5}
+            \label{eq:16}
         \end{equation}
 
         \begin{equation}
@@ -138,7 +138,7 @@
                 \mathbf{P}^m_k & = \left(\mathbf{I} - \mathbf{L}_k \mathbf{C}_d\right)\mathbf{P}^t_k \\
                 \mathbf{\hat{x}}^m_k & = \mathbf{\hat{x}}^t_k + \mathbf{L}_k \left(Y_k - \mathbf{C}_d \mathbf{\hat{x}}^t_k\right) \\
             \end{split}
-            \label{eq:6}
+            \label{eq:17}
         \end{equation}
         From Figure \ref{fig:2} we see that the steady state Kalman gains, $\mathbf{L}_{k_{ss}}$, settle to
         $\begin{bmatrix}
@@ -458,6 +458,26 @@
     \begin{parts}
         \part{Assuming we can only measure the yaw rate $(\nu_k \sim N[0,(0.1)^2 ])$, design a Kalman filter to do full state estimation (select a reasonable $Q_d$ ). Provide a unit step steer input and estimate both states. On one page plot the actual states and estimated states (use $>>subplot(2,2,n)$ for each of the two states). Where are the steady state poles of the estimator?
 
+            \solution{%
+                We can setup the dynamic model of the car in discrete using Bryson's Trick (seen earlier) to propogate the state matrix through time. For this problem, I used a time step of $0.1$ seconds and process noise matrix of
+                \[\mathbf{Q}_d =
+                    \begin{bmatrix}
+                        0.8   & 0.022  \\
+                        0.022 & 0.0012 \\
+                    \end{bmatrix} \]
+
+                My measurement noise matrix, $\mathbf{R}_d$, is $0.01$. Using these parameters along with the one given in the problem statement, we can estimate the yaw rate and sideslip angle of the car (Figure \ref{fig:Q4a}). From the Kalman Filter, with a constant $\mathbf{Q}_d$ and $\mathbf{R}_d$, we get the poles of the steady-state Kalman gain to be
+                \[s_{L_{ss}} = -2.8039 \pm 3.347i \]
+
+                We see that we can estimate the sideslip angle with the same accuracy of the yaw rate estimation. This is because the sideslip angle of the car is not directly observable based on the current measurement matrix.
+                \begin{figure}[!h]
+                    \centering
+                    \includegraphics[width=\linewidth]{Q4a.png}
+                    \caption{Estimation and true values of yaw rate and sideslip of the vehicle in time.}
+                    \label{fig:Q4a}
+                \end{figure}
+            }
+            \clearpage
             Now, somebody has loaded the trunk of the vehicle with bricks, changing the CG of the vehicle so now the actual model (at $25~\frac{m}{s}$) is:
             \begin{equation*}
                 \begin{split}
@@ -485,6 +505,10 @@
         }
 
         \part{Redo part (a). Can you estimate the slip angle correctly? Try various $Q_d$.}
+
+        \solution{%
+
+        }
 
         \part{Now lets say we have a noisy measurement of the slip angle ($\eta_k \sim N\left[0,0.5^2\right]$):
             \[
